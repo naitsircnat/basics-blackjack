@@ -62,19 +62,13 @@ var main = function (input) {
     playerHandValue = handValue(playerCards);
 
     return (
-      "Your cards:<br>" +
-      playerCards[0].name +
-      " of " +
-      playerCards[0].suit +
-      "<br>" +
-      playerCards[1].name +
-      " of " +
-      playerCards[1].suit +
-      "<br><br>Your hand value: " +
+      seeHand(playerCards) +
+      "<br>Your hand value: " +
       playerHandValue +
       "<br><br>" +
       handOutcome(playerHandValue)
     );
+
     // Player chooses whether end turn or draw more cards
   } else if (gameMode == "playerHitOrStand") {
     if (input == "h") {
@@ -97,7 +91,13 @@ var main = function (input) {
       );
     }
     if (input == "s") {
-      return "Turn ended.";
+      return "Turn ended. Computer's turn.";
+    }
+  }
+  // End of game mode - gives option to replay
+  else if ((gameMode = "end")) {
+    if (input == "p") {
+      gameMode = "dealCards";
     }
   }
 };
@@ -184,4 +184,15 @@ var handOutcome = function (handValue) {
     gameMode = "playerHitOrStand";
     return 'Enter "h" to hit<br>Enter "s" to stand';
   }
+};
+
+// See player hand
+var seeHand = function (hand) {
+  var output = "Your cards:<br>";
+
+  for (var i = 0; i < hand.length; i++) {
+    output += hand[i].name + " of " + hand[i].suit + "<br>";
+  }
+
+  return output;
 };
