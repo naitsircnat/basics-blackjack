@@ -1,39 +1,9 @@
 /*
-INTRO
-create deck
-shuffle deck
-deal two cards each to user and com
-
-USER TURN
-check user cards to see if he win/bust
-- 3 paths:
--- bust - end turn
--- blackjack - win
--- less than 21 - choose to hit or stand
-
-give user option to draw card or end turn
-- if draw card, check user cards to see if he win/bust
-
-(Add logic to determine whether Aces should have value of 1 or 11 for a given hand.)
-
-Note: 
-if user blackjack, might still be tie if com blackjacks too
-if user bust, might still be tie if com busts too
-
-COM TURN
-- Gets given a card depending on whether he's above or below 17
-
-(Add logic to determine whether Aces should have value of 1 or 11 for a given hand.)
-
-DECIDE WINNER
-check winner based on
-- who's combined value is closer to 21
-- who bust/blackjack
-
+REMAINING:
+Add logic to determine whether Aces should have value of 1 or 11 for a given hand.)
 
 NOTE: 
 - To also account for different suits having different values?
-- Add end-game state? (e.g. press "p" to play another round)
 */
 
 var deck = generateDeck();
@@ -45,6 +15,9 @@ var playerHandValue = 0;
 var main = function (input) {
   // Deal cards to player and com
   if (gameMode == "dealCards") {
+    playerCards.length = 0;
+    comCards.length = 0;
+
     getShuffledDeck(deck);
 
     for (var i = 0; i < 2; i++) {
@@ -78,28 +51,26 @@ var main = function (input) {
         "<br><br>" +
         handOutcome(handValue(playerCards))
       );
-      // player stands. computer plays turn
+      // player stands
     } else if (input == "s") {
+      gameMode = "comTurn";
+      return "You chose to stand.<br><br>Click Submit to pass turn to computer.";
+    }
+    // computer's turn
+  } else if ((gameMode = "comTurn")) {
+    if (input == "") {
       while (handValue(comCards) < 17) {
         comCards.push(deck.pop());
       }
 
       return (
-        "Turn ended. Computer's turn.<br><br>" +
         "Computer hand:<br>" +
         seeHand(comCards) +
         "<br>Computer hand value: " +
         handValue(comCards) +
-        "<br><br>"
+        "<br><br>" +
+        gameOutcome(handValue(comCards))
       );
-    }
-  } else if ((gameMode = "comTurn")) {
-  }
-
-  // End of game mode - gives option to replay
-  else if ((gameMode = "end")) {
-    if (input == "p") {
-      gameMode = "dealCards";
     }
   }
 };
@@ -179,11 +150,11 @@ var handValue = function (hand) {
 // Get hand outcome
 var handOutcome = function (handValue) {
   if (handValue == 21) {
-    gameMode = "end";
-    return "Blackjack! You won!";
+    gameMode = "dealCards";
+    return "Blackjack! You won! <br><br>Click Submit to play again";
   } else if (handValue > 21) {
     gameMode = "comTurn";
-    return "Bust!";
+    return "Bust!<br><br>Click Submit to pass turn to computer";
   } else {
     gameMode = "playerHitOrStand";
     return 'Enter "h" to hit<br>Enter "s" to stand';
@@ -199,4 +170,53 @@ var seeHand = function (hand) {
   }
 
   return output;
+};
+
+// Get computer/game outcome
+var gameOutcome = function (comHandValue) {
+  gameMode = "dealCards";
+
+  if (comHandValue == 21) {
+    return "Computer won with Blackjack!<br><br>Click Submit to play again";
+  } else if (comHandValue > 21 && handValue(playerCards) > 21) {
+    return "Computers busts too! It's a draw! <br><br>Click Submit to play again";
+  } else if (comHandValue > 21 && handValue(playerCards) < 21) {
+    return (
+      "Your hand value: " +
+      handValue(playerCards) +
+      "<br><br>You won!<br><br>Click Submit to play again"
+    );
+  } else if (comHandValue < 21 && handValue(playerCards) > 21) {
+    return (
+      "Your hand value: " +
+      handValue(playerCards) +
+      "<br><br>Computer won!<br><br>Click Submit to play again"
+    );
+  } else if (
+    comHandValue < 21 &&
+    playerHandValue < 21 &&
+    handValue(playerCards) < comHandValue
+  ) {
+    return (
+      "Your hand value: " +
+      handValue(playerCards) +
+      "<br><br>Computer won!<br><br>Click Submit to play again"
+    );
+  } else if (
+    comHandValue < 21 &&
+    playerHandValue < 21 &&
+    comHandValue == handValue(playerCards)
+  ) {
+    return (
+      "Your hand value: " +
+      handValue(playerCards) +
+      "<br><br>It's a draw!<br><br>Click Submit to play again"
+    );
+  } else {
+    return (
+      "Your hand value: " +
+      handValue(playerCards) +
+      "<br><br>You won!<br><br>Click Submit to play again"
+    );
+  }
 };
