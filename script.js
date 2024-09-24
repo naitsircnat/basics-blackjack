@@ -59,14 +59,13 @@ var main = function (input) {
       playerHandValue += playerCards[j].value;
     }
 
-    playerHandValue = handValue(playerCards);
-
     return (
+      "Your hand:<br>" +
       seeHand(playerCards) +
       "<br>Your hand value: " +
-      playerHandValue +
+      handValue(playerCards) +
       "<br><br>" +
-      handOutcome(playerHandValue)
+      handOutcome(handValue(playerCards))
     );
 
     // Player chooses whether end turn or draw more cards
@@ -75,22 +74,14 @@ var main = function (input) {
       playerCards.push(deck.pop());
 
       return (
-        "Your cards:<br>" +
-        playerCards[0].name +
-        " of " +
-        playerCards[0].suit +
-        "<br>" +
-        playerCards[1].name +
-        " of " +
-        playerCards[1].suit +
-        "<br>" +
-        playerCards[2].name +
-        " of " +
-        playerCards[2].suit +
-        '<br><br>Enter "h" to hit<br>Enter "s" to stand'
+        "Your hand:<br>" +
+        seeHand(playerCards) +
+        "<br>Your hand value: " +
+        handValue(playerCards) +
+        "<br><br>" +
+        handOutcome(handValue(playerCards))
       );
-    }
-    if (input == "s") {
+    } else if (input == "s") {
       return "Turn ended. Computer's turn.";
     }
   }
@@ -102,7 +93,7 @@ var main = function (input) {
   }
 };
 
-// Deck generator
+// Generate deck
 function generateDeck() {
   var deck = [];
   var suits = ["clubs", "diamonds", "hearts", "spades"];
@@ -186,9 +177,9 @@ var handOutcome = function (handValue) {
   }
 };
 
-// See player hand
+// See cards in hand
 var seeHand = function (hand) {
-  var output = "Your cards:<br>";
+  var output = "";
 
   for (var i = 0; i < hand.length; i++) {
     output += hand[i].name + " of " + hand[i].suit + "<br>";
