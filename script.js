@@ -24,12 +24,16 @@ DECIDE WINNER
 check winner based on
 - who's combined value is closer to 21
 - who bust/blackjack
+
+
+NOTE: To also account for different suits having different values?
 */
 
 var deck = generateDeck();
 var gameMode = "dealCards";
 var playerCards = [];
 var comCards = [];
+var playerHandValue = 0;
 
 var main = function (input) {
   // Deal cards to player and com
@@ -44,7 +48,13 @@ var main = function (input) {
       comCards.push(deck.pop());
     }
 
-    gameMode = "playerEndOrDrawCard";
+    for (var j = 0; j < playerCards.length; j++) {
+      playerHandValue += playerCards[j].rank;
+    }
+
+    playerHandValue = handValue(playerCards);
+
+    // if (playerHandValue == 21) gameMode = "playerEndOrDrawCard";
 
     return (
       "Your cards:<br>" +
@@ -55,11 +65,13 @@ var main = function (input) {
       playerCards[1].name +
       " of " +
       playerCards[1].suit +
-      '<br><br>Enter "e" to end turn<br>Enter "d" to draw another card'
+      "<br><br>Your hand value: " +
+      playerHandValue +
+      '<br><br>Enter "h" to hit<br>Enter "s" to stand'
     );
     // Player chooses whether end turn or draw more cards
   } else if (gameMode == "playerEndOrDrawCard") {
-    if (input == "d") {
+    if (input == "h") {
       playerCards.push(deck.pop());
 
       return (
@@ -75,16 +87,16 @@ var main = function (input) {
         playerCards[2].name +
         " of " +
         playerCards[2].suit +
-        '<br><br>Enter "e" to end turn<br>Enter "d" to draw another card'
+        '<br><br>Enter "h" to hit<br>Enter "s" to stand'
       );
     }
-    if (input == "e") {
+    if (input == "s") {
       return "Turn ended.";
     }
   }
 };
 
-// Deck Generator
+// Deck generator
 function generateDeck() {
   var deck = [];
   var suits = ["clubs", "diamonds", "hearts", "spades"];
@@ -121,6 +133,7 @@ function generateDeck() {
   return deck;
 }
 
+// Get shuffled deck
 function getShuffledDeck(deck) {
   for (var i = 0; i < deck.length; i++) {
     var card = deck[i];
@@ -132,8 +145,18 @@ function getShuffledDeck(deck) {
   return deck;
 }
 
+// Draw random card
 var randomCard = function () {
   var randomInt = Math.floor(Math.random() * deck.length);
   var randomCard = deck[randomInt];
   return randomCard;
+};
+
+// Get hand valuea
+var handValue = function (hand) {
+  var totalValue = 0;
+  for (var i = 0; i < hand.length; i++) {
+    totalValue += hand[i].rank;
+  }
+  return totalValue;
 };
