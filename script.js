@@ -56,7 +56,7 @@ var main = function (input) {
     }
 
     for (var j = 0; j < playerCards.length; j++) {
-      playerHandValue += playerCards[j].rank;
+      playerHandValue += playerCards[j].value;
     }
 
     playerHandValue = handValue(playerCards);
@@ -110,27 +110,32 @@ function generateDeck() {
   for (var i = 0; i < suits.length; i++) {
     for (var j = 1; j <= 13; j++) {
       var cardName = j;
+      var cardValue = j;
 
       if (j == 1) {
         cardName = "Ace";
+        cardValue = 11;
       }
 
       if (j == 11) {
         cardName = "Jack";
+        cardValue = 10;
       }
 
       if (j == 12) {
         cardName = "Queen";
+        cardValue = 10;
       }
 
       if (j == 13) {
         cardName = "King";
+        cardValue = 10;
       }
 
       var card = {
         name: cardName,
         suit: suits[i],
-        rank: j,
+        value: cardValue,
       };
       deck.push(card);
     }
@@ -162,7 +167,7 @@ var randomCard = function () {
 var handValue = function (hand) {
   var totalValue = 0;
   for (var i = 0; i < hand.length; i++) {
-    totalValue += hand[i].rank;
+    totalValue += hand[i].value;
   }
   return totalValue;
 };
