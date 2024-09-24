@@ -6,6 +6,11 @@ deal two cards each to user and com
 
 USER TURN
 check user cards to see if he win/bust
+- 3 paths:
+-- bust - end turn
+-- blackjack - win
+-- less than 21 - choose to hit or stand
+
 give user option to draw card or end turn
 - if draw card, check user cards to see if he win/bust
 
@@ -26,7 +31,9 @@ check winner based on
 - who bust/blackjack
 
 
-NOTE: To also account for different suits having different values?
+NOTE: 
+- To also account for different suits having different values?
+- Add end-game state? (e.g. press "p" to play another round)
 */
 
 var deck = generateDeck();
@@ -54,8 +61,6 @@ var main = function (input) {
 
     playerHandValue = handValue(playerCards);
 
-    // if (playerHandValue == 21) gameMode = "playerEndOrDrawCard";
-
     return (
       "Your cards:<br>" +
       playerCards[0].name +
@@ -67,10 +72,11 @@ var main = function (input) {
       playerCards[1].suit +
       "<br><br>Your hand value: " +
       playerHandValue +
-      '<br><br>Enter "h" to hit<br>Enter "s" to stand'
+      "<br><br>" +
+      handOutcome(playerHandValue)
     );
     // Player chooses whether end turn or draw more cards
-  } else if (gameMode == "playerEndOrDrawCard") {
+  } else if (gameMode == "playerHitOrStand") {
     if (input == "h") {
       playerCards.push(deck.pop());
 
@@ -152,11 +158,25 @@ var randomCard = function () {
   return randomCard;
 };
 
-// Get hand valuea
+// Get hand value
 var handValue = function (hand) {
   var totalValue = 0;
   for (var i = 0; i < hand.length; i++) {
     totalValue += hand[i].rank;
   }
   return totalValue;
+};
+
+// Get hand outcome
+var handOutcome = function (handValue) {
+  if (handValue == 21) {
+    gameMode = "end";
+    return "Blackjack! You won!";
+  } else if (handValue > 21) {
+    gameMode = "comTurn";
+    return "Bust!";
+  } else {
+    gameMode = "playerHitOrStand";
+    return 'Enter "h" to hit<br>Enter "s" to stand';
+  }
 };
