@@ -55,10 +55,6 @@ var main = function (input) {
       comCards.push(deck.pop());
     }
 
-    for (var j = 0; j < playerCards.length; j++) {
-      playerHandValue += playerCards[j].value;
-    }
-
     return (
       "Your hand:<br>" +
       seeHand(playerCards) +
@@ -70,6 +66,7 @@ var main = function (input) {
 
     // Player chooses whether end turn or draw more cards
   } else if (gameMode == "playerHitOrStand") {
+    // player hits
     if (input == "h") {
       playerCards.push(deck.pop());
 
@@ -81,10 +78,24 @@ var main = function (input) {
         "<br><br>" +
         handOutcome(handValue(playerCards))
       );
+      // player stands. computer plays turn
     } else if (input == "s") {
-      return "Turn ended. Computer's turn.";
+      while (handValue(comCards) < 17) {
+        comCards.push(deck.pop());
+      }
+
+      return (
+        "Turn ended. Computer's turn.<br><br>" +
+        "Computer hand:<br>" +
+        seeHand(comCards) +
+        "<br>Computer hand value: " +
+        handValue(comCards) +
+        "<br><br>"
+      );
     }
+  } else if ((gameMode = "comTurn")) {
   }
+
   // End of game mode - gives option to replay
   else if ((gameMode = "end")) {
     if (input == "p") {
@@ -92,6 +103,8 @@ var main = function (input) {
     }
   }
 };
+
+// HELPER FUNCTIONS
 
 // Generate deck
 function generateDeck() {
