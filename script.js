@@ -1,7 +1,4 @@
-/*
-NOTE: 
-- To also account for different suits having different values?
-*/
+//---GLOBAL VARIABLES---
 
 var deck = generateDeck();
 var gameMode = "welcome";
@@ -9,6 +6,7 @@ var playerCards = [];
 var comCards = [];
 var playerHandValue = 0;
 
+//---MAIN---
 var main = function (input) {
   // Deal cards to player and com
   if (gameMode == "welcome") {
@@ -75,7 +73,7 @@ var main = function (input) {
   }
 };
 
-// HELPER FUNCTIONS
+//---HELPER FUNCTIONS---
 
 // Generate deck
 function generateDeck() {
