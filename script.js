@@ -1,20 +1,20 @@
 /*
-REMAINING:
-Add logic to determine whether Aces should have value of 1 or 11 for a given hand.)
-
 NOTE: 
 - To also account for different suits having different values?
 */
 
 var deck = generateDeck();
-var gameMode = "dealCards";
+var gameMode = "welcome";
 var playerCards = [];
 var comCards = [];
 var playerHandValue = 0;
 
 var main = function (input) {
   // Deal cards to player and com
-  if (gameMode == "dealCards") {
+  if (gameMode == "welcome") {
+    gameMode = "dealCards";
+    return "Welcome to Blackjack! Click Submit to deal cards.";
+  } else if (gameMode == "dealCards") {
     playerCards.length = 0;
     comCards.length = 0;
 
@@ -37,7 +37,7 @@ var main = function (input) {
       handOutcome(handValue(playerCards))
     );
 
-    // Player chooses whether end turn or draw more cards
+    // Player chooses whether to hit or stand
   } else if (gameMode == "playerHitOrStand") {
     // player hits
     if (input == "h") {
@@ -80,7 +80,7 @@ var main = function (input) {
 // Generate deck
 function generateDeck() {
   var deck = [];
-  var suits = ["clubs", "diamonds", "hearts", "spades"];
+  var suits = ["♣️ ", "♦️", "🖤", "♠️"];
 
   for (var i = 0; i < suits.length; i++) {
     for (var j = 1; j <= 13; j++) {
@@ -141,34 +141,46 @@ var randomCard = function () {
 // Get hand value
 var handValue = function (hand) {
   var totalValue = 0;
+  var totalValueTillAce = 0;
+
   for (var i = 0; i < hand.length; i++) {
+    // if ace is found, determines whether ace should be 1 instead of 11
+    if (hand[i].name == "Ace") {
+      aceIndex = i;
+
+      for (var j = 0; j <= aceIndex; j++) {
+        totalValueTillAce += hand[i].value;
+      }
+      if (totalValueTillAce > 21) {
+        hand[i].value = 1;
+      }
+    }
     totalValue += hand[i].value;
   }
+
   return totalValue;
 };
 
 // Get hand outcome
 var handOutcome = function (handValue) {
   if (handValue == 21) {
-    gameMode = "dealCards";
-    return "Blackjack! You won! <br><br>Click Submit to play again";
+    gameMode = "comTurn";
+    return "Blackjack! 🎉🎉🎉 <br><br>Click Submit to pass turn to computer";
   } else if (handValue > 21) {
     gameMode = "comTurn";
-    return "Bust!<br><br>Click Submit to pass turn to computer";
+    return "Bust! 💥💥💥 <br><br>Click Submit to pass turn to computer";
   } else {
     gameMode = "playerHitOrStand";
-    return 'Enter "h" to hit<br>Enter "s" to stand';
+    return 'Enter "h" to hit 🤲  <br>Enter "s" to stand 🚫';
   }
 };
 
 // See cards in hand
 var seeHand = function (hand) {
   var output = "";
-
   for (var i = 0; i < hand.length; i++) {
     output += hand[i].name + " of " + hand[i].suit + "<br>";
   }
-
   return output;
 };
 
@@ -176,21 +188,26 @@ var seeHand = function (hand) {
 var gameOutcome = function (comHandValue) {
   gameMode = "dealCards";
 
-  if (comHandValue == 21) {
-    return "Computer won with Blackjack!<br><br>Click Submit to play again";
+  if (
+    comHandValue == 21 &&
+    (handValue(playerCards) > 21 || handValue(playerCards) < 21)
+  ) {
+    return "Computer won with Blackjack 🥶 <br><br>Click Submit to play again";
+  } else if (comHandValue == 21 && handValue(playerCards) == 21) {
+    return "Computer Blackjacked too! It's a draw! ⚔️ <br><br>Click Submit to play again";
   } else if (comHandValue > 21 && handValue(playerCards) > 21) {
-    return "Computers busts too! It's a draw! <br><br>Click Submit to play again";
+    return "Computers busts too! It's a draw! ⚔️ <br><br>Click Submit to play again";
   } else if (comHandValue > 21 && handValue(playerCards) < 21) {
     return (
       "Your hand value: " +
       handValue(playerCards) +
-      "<br><br>You won!<br><br>Click Submit to play again"
+      "<br><br>You won! 🤩🤩🤩<br><br>Click Submit to play again"
     );
   } else if (comHandValue < 21 && handValue(playerCards) > 21) {
     return (
       "Your hand value: " +
       handValue(playerCards) +
-      "<br><br>Computer won!<br><br>Click Submit to play again"
+      "<br><br>Computer won 🥶<br><br>Click Submit to play again"
     );
   } else if (
     comHandValue < 21 &&
@@ -200,7 +217,7 @@ var gameOutcome = function (comHandValue) {
     return (
       "Your hand value: " +
       handValue(playerCards) +
-      "<br><br>Computer won!<br><br>Click Submit to play again"
+      "<br><br>Computer won 🥶<br><br>Click Submit to play again"
     );
   } else if (
     comHandValue < 21 &&
@@ -210,13 +227,13 @@ var gameOutcome = function (comHandValue) {
     return (
       "Your hand value: " +
       handValue(playerCards) +
-      "<br><br>It's a draw!<br><br>Click Submit to play again"
+      "<br><br>It's a draw! ⚔️<br><br>Click Submit to play again"
     );
   } else {
     return (
       "Your hand value: " +
       handValue(playerCards) +
-      "<br><br>You won!<br><br>Click Submit to play again"
+      "<br><br>You won! 🤩🤩🤩 <br><br>Click Submit to play again"
     );
   }
 };
