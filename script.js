@@ -7,8 +7,9 @@ var comCards = [];
 var playerHandValue = 0;
 
 //---MAIN---
+
 var main = function (input) {
-  // Deal cards to player and com
+  // Welcome + Deal cards to player and com
   if (gameMode == "welcome") {
     gameMode = "dealCards";
     return "Welcome to Blackjack! Click Submit to deal cards.";
